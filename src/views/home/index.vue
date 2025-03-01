@@ -22,7 +22,7 @@ div
 
   p 签到配置：每天签到奖励 {{ signInInfo.conf.dailyCash }} 点卷
   p(v-for="(cumulativeCash, day) in signInInfo.conf.cumulativeCash")
-    span 连签 {{ day }} 天签到奖励 {{ cumulativeCash[1] }} 点卷
+    span 本月累签 {{ day }} 天签到奖励 {{ cumulativeCash[1] }} 点卷
     span(v-if="cumulativeCash[2] == 3") &nbsp;(3 级佬友专享)
   p 本月签到天数: {{ signInInfo.signInDays.length }}
   n-button(type="info", @click="signIn") 签到领奖
