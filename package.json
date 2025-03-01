@@ -1,0 +1,51 @@
+{
+  "name": "linuxdo-dof-ui",
+  "version": "1.0.0",
+  "description": "LinuxDo DOF - 前端",
+  "author": "Cat73",
+  "private": true,
+  "scripts": {
+    "serve": "vite",
+    "build": "vite build"
+  },
+  "dependencies": {
+    "@skit/x.naive-ui": "^0.19.0",
+    "@vicons/fa": "^0.13.0",
+    "@vicons/ionicons5": "^0.13.0",
+    "@vicons/material": "^0.13.0",
+    "axios": "^1.8.1",
+    "dayjs": "^1.11.13",
+    "lodash-es": "^4.17.21",
+    "md5": "^2.3.0",
+    "pinia": "^3.0.1",
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.0.9",
+    "@types/md5": "^2.3.5",
+    "@vitejs/plugin-vue": "^5.2.1",
+    "@vitejs/plugin-vue-jsx": "^4.1.1",
+    "naive-ui": "^2.41.0",
+    "postcss": "^8.5.3",
+    "pug": "^3.0.3",
+    "rollup-plugin-visualizer": "^5.14.0",
+    "sass": "^1.85.1",
+    "tailwindcss": "^4.0.9",
+    "unplugin-auto-import": "^19.1.1",
+    "unplugin-vue-components": "^28.4.1",
+    "vfonts": "^0.0.3",
+    "vite": "^6.2.0"
+  },
+  "engineStrict": true,
+  "engines": {
+    "node": ">= 21.0",
+    "npm": ">= 10.0.0"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@parcel/watcher",
+      "esbuild"
+    ]
+  }
+}
