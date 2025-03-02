@@ -11,13 +11,14 @@ div
 
   div.w-48
     template(v-if="commonStore.userInfo.dnfUsername")
-      n-input(v-model:value="dnfaccount.password")
+      n-input(v-model:value="dnfaccount.password", type="password", placeholder="请输入新密码")
       n-button(type="info", @click="changeDnfPassword") 修改毒奶粉登录密码
     template(v-else)
-      n-input(v-model:value="dnfaccount.username")
-      n-input(v-model:value="dnfaccount.password")
+      n-input(v-model:value="dnfaccount.username", placeholder="请输入账号")
+      n-input(v-model:value="dnfaccount.password", type="password", placeholder="请输入密码")
       n-button(type="info", @click="registerDnfAccount") 注册毒奶粉账号
-  
+  p 登录密码随时可在此页面修改，受 DNF 数据库结构限制，只能传输 md5 值，无法使用更安全的 hash 方式，因此建议选一个和其他网站不一样的密码，反正忘了随时能改
+
   n-divider
 
   p 签到配置：每天签到奖励 {{ signInInfo.conf.dailyCash }} 点卷
@@ -60,11 +61,14 @@ const logout = async () => {
 const registerDnfAccount = async () => {
   await doRegisterDnfAccount({ dnfUsername: dnfaccount.value.username, dnfPassword: md5(dnfaccount.value.password) })
   await commonStore.fetchUserInfo()
+  dnfaccount.value.username = ''
+  dnfaccount.value.password = ''
   window.$message.success('注册成功')
 }
 
 const changeDnfPassword = async () => {
   await doChangeDnfPassword({ dnfPassword: md5(dnfaccount.value.password) })
+  dnfaccount.value.password = ''
   window.$message.success('修改成功')
 }
 
