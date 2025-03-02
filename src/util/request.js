@@ -20,7 +20,6 @@ instance.interceptors.response.use(response => {
 
     if (respCode == -2) { // 跳转到登陆页
       useCommonStore().$reset()
-      route.push('/login')
 
       // 弹出一次后，锁定 3s 不再弹出
       if (Date.now() > loginTimeoutLock) {
@@ -31,6 +30,8 @@ instance.interceptors.response.use(response => {
       // 如果已经在登陆页了，不要弹出提示
       if (route.currentRoute.value.name == 'Login') {
         showMessage = false
+      } else {
+        route.push('/login')
       }
     }
 
