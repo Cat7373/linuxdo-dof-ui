@@ -27,17 +27,16 @@ div
 
   n-divider
 
-  p 签到配置：每天签到奖励 {{ signInInfo.conf.dailyCash }} 点卷
-  p(v-for="(cumulativeCash, day) in signInInfo.conf.cumulativeCash")
-    span 本月累签 {{ day }} 天签到奖励 {{ cumulativeCash[1] }} 点卷
-    span(v-if="cumulativeCash[2] == 3") &nbsp;(3 级佬友专享)
-  p 本月签到天数: {{ signInInfo.signInDays.length }}
+  p 签到配置：每天签到获得 {{ formatReward({ dailyReward: signInInfo.conf.dailyReward, minTrustLevel: 1 }) }}
+  p(v-for="(cumulativeReward, day) in signInInfo.conf.cumulativeReward")
+    span 本月累签 {{ day }} 天签到获得 {{ formatReward(cumulativeReward) }}
+  p 本月已签 {{ signInInfo.signInDays.length }} 天
   n-button(type="info", @click="signIn") 签到领奖
 
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted } from 'vue'
 import md5 from 'md5'
 import { useCommonStore } from '@/store'
 import { useRouter } from 'vue-router'
@@ -56,6 +55,7 @@ const signInInfo = ref({
     dailyCash: 0,
     cumulativeCash: {},
   },
+  items: [],
   signInDays: [],
 })
 const dnfCharacList = ref([])
@@ -90,7 +90,7 @@ const signIn = async () => {
   if (!commonStore.userInfo.dnfBindCharacName) {
     window.$dialog.warning({
       title: '您还没绑定角色',
-      content: '如果不绑定角色，签到奖励只能领到点卷，无法领到道具，是否确认继续签到？',
+      content: '如果不绑定角色，将只能领到点卷，无法领到道具，是否确认继续签到？',
       positiveText: '继续签到',
       negativeText: '放弃签到',
       onPositiveClick: async () => {
@@ -107,9 +107,29 @@ const confirmSignIn = async () => {
   const res = await doSignIn()
   window.$dialog.success({
     title: '签到成功',
-    content: `本次签到获得 ${res.dailyCash} 点卷${res.cumulativeCash ? `，已连续签到 ${res.cumulativeDays} 天，额外获得 ${res.cumulativeCash} 点卷` : ''}`,
+    content: `本月已签到 ${ signInInfo.signInDays.length } 天`,
   })
   signInInfo.value = await fetchSignInInfo()
+}
+
+const formatReward = (reward) => {
+  if (!reward || !reward.dailyReward) return ''
+
+  let res = []
+  
+  if (reward.dailyReward.cash) {
+    res.push(`${reward.dailyReward.cash} 点卷`)
+  }
+  if (reward.dailyReward.gold) {
+    res.push(`${reward.dailyReward.gold} 金币`)
+  }
+  if (reward.dailyReward.items) {
+    for (const { id, count } of reward.dailyReward.items) {
+      res.push(`${count} 个 ${signInInfo.value.items[id]}`)
+    }
+  }
+
+  return res.join('、') + (reward.minTrustLevel >= 3 ? '（三级佬友专享）' : '')
 }
 
 onMounted(async () => {
@@ -119,7 +139,6 @@ onMounted(async () => {
     label: item.charac_name,
     value: item.charac_no,
   }))
-  console.log(dnfCharacList.value)
 })
 
 </script>
