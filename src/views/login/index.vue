@@ -18,7 +18,6 @@ const router = useRouter()
 // 登陆
 const linuxDoLogin = async () => {
   const res = await fetchLinuxDoLoginUrl()
-  await commonStore.fetchUserInfo()
   window.location.href = res
 }
 
@@ -26,6 +25,7 @@ onMounted(async () => {
   const { code, state } = route.query
   if (code && state) { // 处理 LinuxDo 登陆回调
     await doLinuxDoLogin({ code, state })
+    await commonStore.fetchUserInfo()
     router.push('/home')
   }
 })
