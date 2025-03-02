@@ -7,7 +7,10 @@
 <script setup>
 import { onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { useCommonStore } from '@/store'
 import { fetchLinuxDoLoginUrl, doLinuxDoLogin } from '@/api'
+
+const commonStore = useCommonStore()
 
 const route = useRoute()
 const router = useRouter()
@@ -15,6 +18,7 @@ const router = useRouter()
 // 登陆
 const linuxDoLogin = async () => {
   const res = await fetchLinuxDoLoginUrl()
+  await commonStore.fetchUserInfo()
   window.location.href = res
 }
 
