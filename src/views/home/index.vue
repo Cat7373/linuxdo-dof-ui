@@ -33,9 +33,12 @@ div
 import { ref, onMounted, computed } from 'vue'
 import md5 from 'md5'
 import { useCommonStore } from '@/store'
+import { useRouter } from 'vue-router'
 import { doLogout, doRegisterDnfAccount, doChangeDnfPassword, fetchSignInInfo, doSignIn } from '@/api'
 
 const commonStore = useCommonStore()
+
+const router = useRouter()
 
 const dnfaccount = ref({
   username: '',
