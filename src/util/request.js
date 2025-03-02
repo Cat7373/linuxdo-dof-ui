@@ -28,7 +28,7 @@ instance.interceptors.response.use(response => {
         showMessage = false
       }
       // 如果已经在登陆页了，不要弹出提示
-      if (route.currentRoute.value.name == 'Login') {
+      if (route.currentRoute.value.name === 'Login' || location.hash.startsWith('#/login')) {
         showMessage = false
       } else {
         route.push('/login')
