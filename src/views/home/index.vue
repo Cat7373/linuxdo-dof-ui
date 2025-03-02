@@ -107,7 +107,7 @@ const confirmSignIn = async () => {
   const res = await doSignIn()
   window.$dialog.success({
     title: '签到成功',
-    content: `本月已签到 ${ signInInfo.signInDays.length } 天`,
+    content: `本月已签到 ${ signInInfo.value.signInDays.length } 天`,
   })
   signInInfo.value = await fetchSignInInfo()
 }
