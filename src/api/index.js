@@ -52,6 +52,22 @@ export function doChangeDnfPassword(data) {
   })
 }
 
+export function fetchDnfCharacList(data) {
+  return fetch({
+    url: '/api/user/listCharac',
+    method: 'GET',
+    data,
+  })
+}
+
+export function doBindDnfCharac(data) {
+  return fetch({
+    url: '/api/user/bindCharac',
+    method: 'POST',
+    data,
+  })
+}
+
 // ==== 签到 ====
 
 export function fetchSignInInfo(params) {

@@ -7,6 +7,7 @@ const useCommonStore = defineStore('base', {
     userInfo: {
       id: null,
       dnfUsername: null,
+      dnfBindCharacName: null,
       linuxDoName: null,
       linuxDoUsername: null,
       linuxDoTrustLevel: null,
