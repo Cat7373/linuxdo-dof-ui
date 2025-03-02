@@ -125,7 +125,7 @@ const formatReward = (reward) => {
   }
   if (reward.dailyReward.items) {
     for (const { id, count } of reward.dailyReward.items) {
-      res.push(`${count} 个 ${signInInfo.value.items[id]}`)
+      res.push(`${count} 个${signInInfo.value.items[id]}`)
     }
   }
 
