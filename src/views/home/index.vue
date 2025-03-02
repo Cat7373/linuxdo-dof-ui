@@ -118,7 +118,7 @@ const formatReward = (reward) => {
   let res = []
   
   if (reward.dailyReward.cash) {
-    res.push(`${reward.dailyReward.cash} 点卷`)
+    res.push(`${reward.dailyReward.cashDisplay ?? reward.dailyReward.cash} 点卷`)
   }
   if (reward.dailyReward.gold) {
     res.push(`${reward.dailyReward.gold} 金币`)
