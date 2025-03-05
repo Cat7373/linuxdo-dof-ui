@@ -3,7 +3,7 @@ div
   p LinuxDo 信息：佬友 {{ commonStore.userInfo.linuxDoUsername }}，信任等级 {{ commonStore.userInfo.linuxDoTrustLevel }}
   p 毒奶粉用户名：{{ commonStore.userInfo.dnfUsername ?? '未注册' }}，绑定角色 {{ commonStore.userInfo.dnfBindCharacName ?? '未绑定' }}
   p
-    a.text-blue-500(href="https://linux.do/t/topic/458099/39?u=cat73") 客户端下载引导
+    a.text-blue-500(href="https://linux.do/t/topic/472401?u=cat73") 客户端下载引导
 
   n-button(type="info", @click="logout") 退出登录
 
@@ -16,7 +16,7 @@ div
     template(v-else)
       n-input(v-model:value="dnfaccount.username", placeholder="请输入账号")
       n-input(v-model:value="dnfaccount.password", type="password", placeholder="请输入密码")
-      n-button(type="info", @click="registerDnfAccount") 注册毒奶粉账号
+      n-button(type="info", @click="registerDnfAccount") 创建毒奶粉账号
   p.text-xs.text-neutral-500 登录密码随时可在这里修改，受 DNF 数据库结构限制，只能传输 md5 值，无法使用更安全的 hash 方式，建议设一个和其他网站不一样的密码，反正忘了随时能改
 
   n-divider
