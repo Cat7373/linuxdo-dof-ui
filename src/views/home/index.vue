@@ -124,7 +124,8 @@ const formatReward = (reward) => {
     res.push(`${reward.dailyReward.gold} 金币`)
   }
   if (reward.dailyReward.items) {
-    for (const { id, count } of reward.dailyReward.items) {
+    for (const id in reward.dailyReward.items) {
+      const count = reward.dailyReward.items[id]
       res.push(`${count} 个${signInInfo.value.items[id]}`)
     }
   }
