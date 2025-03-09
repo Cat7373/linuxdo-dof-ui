@@ -11,6 +11,7 @@ const useCommonStore = defineStore('base', {
       linuxDoName: null,
       linuxDoUsername: null,
       linuxDoTrustLevel: null,
+      pointBalance: null,
     },
   }),
   actions: {

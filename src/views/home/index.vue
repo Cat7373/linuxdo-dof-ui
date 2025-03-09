@@ -1,6 +1,6 @@
 <template lang="pug">
 div
-  p LinuxDo 信息：佬友 {{ commonStore.userInfo.linuxDoUsername }}，信任等级 {{ commonStore.userInfo.linuxDoTrustLevel }}
+  p LinuxDo 信息：佬友 {{ commonStore.userInfo.linuxDoUsername }}，信任等级 {{ commonStore.userInfo.linuxDoTrustLevel }}，可用积分 {{ commonStore.userInfo.pointBalance }}
   p 毒奶粉用户名：{{ commonStore.userInfo.dnfUsername ?? '未注册' }}，绑定角色 {{ commonStore.userInfo.dnfBindCharacName ?? '未绑定' }}
   p
     a.text-blue-500(href="https://linux.do/t/topic/472401?u=cat73") 客户端下载引导
@@ -122,6 +122,9 @@ const formatReward = (reward) => {
   }
   if (reward.dailyReward.gold) {
     res.push(`${reward.dailyReward.gold} 金币`)
+  }
+  if (reward.dailyReward.point) {
+    res.push(`${reward.dailyReward.point} 积分`)
   }
   if (reward.dailyReward.items) {
     for (const id in reward.dailyReward.items) {

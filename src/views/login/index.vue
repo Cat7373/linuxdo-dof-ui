@@ -29,7 +29,7 @@ onMounted(async () => {
     if (code && state) { // 处理 LinuxDo 登陆回调
       await doLinuxDoLogin({ code, state })
       await commonStore.fetchUserInfo()
-      router.push('/home')
+      await router.push('/home')
     }
   } finally {
     ready.value = true
