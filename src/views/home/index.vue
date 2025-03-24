@@ -27,7 +27,7 @@ div
 
   n-divider
 
-  p 签到配置：每天签到获得 {{ formatReward({ reward: signInInfo.conf.reward, minTrustLevel: 1 }) }}
+  p 签到配置：每天签到获得 {{ formatReward({ reward: signInInfo.conf.dailyReward, minTrustLevel: 1 }) }}
   p(v-for="(monthReward, day) in signInInfo.conf.monthReward")
     span 本月累签 {{ day }} 天签到获得 {{ formatReward(monthReward) }}
   p 本月已签 {{ signInInfo.signInDays.length }} 天
