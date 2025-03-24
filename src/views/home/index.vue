@@ -27,9 +27,9 @@ div
 
   n-divider
 
-  p 签到配置：每天签到获得 {{ formatReward({ dailyReward: signInInfo.conf.dailyReward, minTrustLevel: 1 }) }}
-  p(v-for="(cumulativeReward, day) in signInInfo.conf.cumulativeReward")
-    span 本月累签 {{ day }} 天签到获得 {{ formatReward(cumulativeReward) }}
+  p 签到配置：每天签到获得 {{ formatReward({ reward: signInInfo.conf.reward, minTrustLevel: 1 }) }}
+  p(v-for="(monthReward, day) in signInInfo.conf.monthReward")
+    span 本月累签 {{ day }} 天签到获得 {{ formatReward(monthReward) }}
   p 本月已签 {{ signInInfo.signInDays.length }} 天
   n-button(type="info", @click="signIn") 签到领奖
 
@@ -113,22 +113,22 @@ const confirmSignIn = async () => {
 }
 
 const formatReward = (reward) => {
-  if (!reward || !reward.dailyReward) return ''
+  if (!reward || !reward.reward) return ''
 
   let res = []
   
-  if (reward.dailyReward.cash) {
-    res.push(`${reward.dailyReward.cashDisplay ?? reward.dailyReward.cash} 点卷`)
+  if (reward.reward.cash) {
+    res.push(`${reward.reward.cashDisplay ?? reward.reward.cash} 点卷`)
   }
-  if (reward.dailyReward.gold) {
-    res.push(`${reward.dailyReward.gold} 金币`)
+  if (reward.reward.gold) {
+    res.push(`${reward.reward.gold} 金币`)
   }
-  if (reward.dailyReward.point) {
-    res.push(`${reward.dailyReward.point} 积分`)
+  if (reward.reward.point) {
+    res.push(`${reward.reward.point} 积分`)
   }
-  if (reward.dailyReward.items) {
-    for (const id in reward.dailyReward.items) {
-      const count = reward.dailyReward.items[id]
+  if (reward.reward.items) {
+    for (const id in reward.reward.items) {
+      const count = reward.reward.items[id]
       res.push(`${count} 个${signInInfo.value.items[id]}`)
     }
   }
