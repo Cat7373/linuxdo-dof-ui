@@ -1,5 +1,5 @@
 <template lang="pug">
-.h-screen.w-screen
+.h-screen.w-screen.bg-neutral-50
   .w-96.mx-auto.pt-16(v-if="ready")
     n-card.text-center
       p.text-2xl

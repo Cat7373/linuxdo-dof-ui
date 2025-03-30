@@ -1,5 +1,5 @@
 <template lang="pug">
-.px-8.py-6.space-y-8
+.px-8.py-6.space-y-8.bg-neutral-50
   //- L 站账号
   n-card(size="small")
     n-flex(justify="space-between")
@@ -77,7 +77,7 @@
       n-tab-pane(v-for="category in fuliduihuan.categorys", :key="category.id", :name="category.id", :tab="category.name")
         n-grid(x-gap="10", y-gap="10", cols="2 900:4 1800:6")
           template(v-for="good in category.goods", :key="good.id")
-            n-gi.border.p-2
+            n-gi.border.rounded.p-2
               n-flex(justify="space-between")
                 .info
                   p.text-sm {{ good.name }}

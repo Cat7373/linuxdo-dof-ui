@@ -1,6 +1,5 @@
 <template lang="pug">
-.p-2
-  router-view
+router-view
 </template>
 
 <script lang="jsx" setup>
