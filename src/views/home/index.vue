@@ -166,6 +166,11 @@ const logout = async () => {
 
 // 注册游戏账号
 const registerDnfAccount = async () => {
+  if (!dnfaccount.value.password) {
+    window.$message.error('请输入密码')
+    return
+  }
+
   await doRegisterDnfAccount({ dnfUsername: dnfaccount.value.username, dnfPassword: md5(dnfaccount.value.password) })
   await commonStore.fetchUserInfo()
   dnfaccount.value.username = ''
@@ -174,6 +179,11 @@ const registerDnfAccount = async () => {
 }
 // 修改游戏密码
 const changeDnfPassword = async () => {
+  if (!dnfaccount.value.password) {
+    window.$message.error('请输入密码')
+    return
+  }
+
   await doChangeDnfPassword({ dnfPassword: md5(dnfaccount.value.password) })
   dnfaccount.value.password = ''
   window.$message.success('修改成功')
