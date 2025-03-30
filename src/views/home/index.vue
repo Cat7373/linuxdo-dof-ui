@@ -180,7 +180,7 @@ const registerDnfAccount = async () => {
 // 修改游戏密码
 const changeDnfPassword = async () => {
   if (!dnfaccount.value.password) {
-    window.$message.warning('请输入密码')
+    window.$message.warning('请输入新密码')
     return
   }
 
