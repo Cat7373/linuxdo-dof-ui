@@ -11,11 +11,11 @@
           n-icon(size="40")
             LogoutIcon
 
-  //- 游戏账号
   n-grid(x-gap="10", y-gap="10", cols="1 600:2")
-    //- 注册 + 修改密码
+    //- 游戏账号
     n-gi
       n-card.h-full(size="small", title="游戏账号")
+        //- 注册 + 修改密码
         n-form(v-if="!commonStore.userInfo.dnfUsername", inline, label-placement="left", label-width="auto")
           n-form-item(label="账号")
             n-input(v-model:value="dnfaccount.username", placeholder="请输入账号")
@@ -31,21 +31,23 @@
 
         //- 提示区
         .text-neutral-500
-          p(v-if="!commonStore.userInfo.dnfUsername") * 您需要先注册账号，然后下载客户端后，使用注册的账号登录游戏，不用担心忘记密码，注册后随时可以修改
+          p(v-if="!commonStore.userInfo.dnfUsername") * 您需要下载客户端后，使用注册的账号登录游戏，不用担心忘记密码，注册后随时可修改
           p(v-else) * 您已注册游戏账号 {{ commonStore.userInfo.dnfUsername }}，如果忘记密码，可在此修改
         p
           span.text-neutral-500 *&nbsp;
-          a.text-blue-500(href="https://linux.do/t/topic/472401?u=cat73") 客户端下载、服务器介绍及 FAQ
+          a.text-blue-500(href="https://linux.do/t/topic/472401?u=cat73") 客户端下载、服务器介绍、FAQ 及讨论区
 
     //- 角色绑定
     n-gi
       n-card.h-full(v-if="commonStore.userInfo.dnfUsername", size="small", title="角色绑定")
+        //- 角色绑定
         n-form(inline, label-placement="left", label-width="auto")
           n-form-item(label="选择角色")
             n-select.w-48(v-model:value="dnfCharacId", :options="dnfCharacList")
           n-form-item
             n-button(type="info", @click="bindDnfCharac") 绑定角色
-        
+
+        //- 提示区
         .text-neutral-500
           p(v-if="commonStore.userInfo.dnfBindCharacName") * 您已绑定游戏角色 {{ commonStore.userInfo.dnfBindCharacName }}
           p(v-else) * 您还没绑定游戏角色
@@ -54,15 +56,18 @@
   //- 每日签到
   n-card(v-if="commonStore.userInfo.dnfUsername", size="small", title="每日签到")
     n-tabs(class="card-tabs", default-value="signin", animated)
+      //- 签到页
       n-tab-pane(name="signin", tab="签到")
         n-calendar(:default-value="now", :is-date-disabled="t => !dayjs(t).isSame(dayjs(), 'month')", #="{ month, date }", style="height: 500px;")
           p(:style="{ color: qiandaoColor(month, date) }") {{ qiandaoStatus(month, date) }}
-        
+
         .text-neutral-500
           p * 本月已签到 {{ signInInfo.signInDays.length }} 天
 
         n-button.w-full.mt-8(v-if="signInInfo.signInDays.includes(new Date().getDate())", type="info", disabled) 今日已签到
         n-button.w-full.mt-8(v-else, type="info", @click="signIn") 签到
+
+      //- 说明页
       n-tab-pane(name="reward", tab="说明")
         .text-sm
           p.text-neutral-500 每日礼品：{{ formatReward({ reward: signInInfo.conf.dailyReward, minTrustLevel: 1 }) }}
@@ -74,8 +79,10 @@
   //- 积分兑换
   n-card(v-if="commonStore.userInfo.dnfUsername", size="small", :title="`积分兑换 - 剩余 ${ commonStore.userInfo.pointBalance } 积分`")
     n-tabs(v-if="fuliduihuan.defaultTab", class="card-tabs", :default-value="fuliduihuan.defaultTab", animated)
+      //- 商品分类
       n-tab-pane(v-for="category in fuliduihuan.categorys", :key="category.id", :name="category.id", :tab="category.name")
         n-grid(x-gap="10", y-gap="10", cols="2 900:4 1800:6")
+          //- 商品
           template(v-for="good in category.goods", :key="good.id")
             n-gi.border.rounded.p-2
               n-flex(justify="space-between")
@@ -85,6 +92,7 @@
                     span {{ good.price }} 积分
                     span(v-if="good.limit < 99999999") ，限购: {{ good.todayCount }}/{{ good.limit }}
 
+                //- 兑换按钮及弹窗
                 n-popover(trigger="hover", @update:show="() => fuliduihuan.count = 1", :ref="el => saveRef(el, 'fuliduihuan', good.id)")
                   template(#trigger)
                     n-button 兑换
@@ -96,11 +104,11 @@
                       template(#icon)
                         CheckIcon
 
+      //- TODO 许愿页
       n-tab-pane(name="wish", tab="许愿")
-        //- TODO 许愿池
         p
-          span 许愿池建设中喵，请先至
-          a.text-blue-500(href="https://linux.do/t/topic/472401?u=cat73") 论坛帖子
+          span 许愿池施工中喵，请先至
+          a.text-blue-500(href="https://linux.do/t/topic/472401?u=cat73") 论坛回帖
           span 许愿喵...
 </template>
 
@@ -117,10 +125,15 @@ const commonStore = useCommonStore()
 
 const router = useRouter()
 
+// 注册 + 修改密码
 const dnfaccount = ref({
   username: '',
   password: '',
 })
+// 绑定角色
+const dnfCharacList = ref([])
+const dnfCharacId = ref(null)
+// 签到
 const signInInfo = ref({
   conf: {
     dailyCash: 0,
@@ -129,16 +142,15 @@ const signInInfo = ref({
   items: [],
   signInDays: [],
 })
-const dnfCharacList = ref([])
-const dnfCharacId = ref(null)
+// 积分兑换
 const fuliduihuan = ref({
   categorys: [],
   defaultTab: '',
   count: 1
 })
 
+// 弹窗 ref 保存
 const popoverRefs = new Map()
-
 const saveRef = (el, type, id) => {
   if (!popoverRefs.has(type)) {
     popoverRefs.set(type, {})
@@ -146,11 +158,13 @@ const saveRef = (el, type, id) => {
   popoverRefs.get(type)[id] = el
 }
 
+// 退出登录
 const logout = async () => {
   await doLogout()
   router.push('/login')
 }
 
+// 注册游戏账号
 const registerDnfAccount = async () => {
   await doRegisterDnfAccount({ dnfUsername: dnfaccount.value.username, dnfPassword: md5(dnfaccount.value.password) })
   await commonStore.fetchUserInfo()
@@ -158,19 +172,21 @@ const registerDnfAccount = async () => {
   dnfaccount.value.password = ''
   window.$message.success('注册成功')
 }
-
+// 修改游戏密码
 const changeDnfPassword = async () => {
   await doChangeDnfPassword({ dnfPassword: md5(dnfaccount.value.password) })
   dnfaccount.value.password = ''
   window.$message.success('修改成功')
 }
 
+// 绑定角色
 const bindDnfCharac = async () => {
   await doBindDnfCharac({ characNo: dnfCharacId.value })
   await commonStore.fetchUserInfo()
   window.$message.success('绑定成功')
 }
 
+// 签到
 const signIn = async () => {
   if (!commonStore.userInfo.dnfBindCharacName) {
     window.$dialog.warning({
@@ -187,7 +203,7 @@ const signIn = async () => {
     await confirmSignIn()
   }
 }
-
+// 确认签到
 const confirmSignIn = async () => {
   const res = await doSignIn()
   window.$dialog.success({
@@ -197,7 +213,7 @@ const confirmSignIn = async () => {
   signInInfo.value = await fetchSignInInfo()
   await commonStore.fetchUserInfo()
 }
-
+// 签到奖励格式化
 const formatReward = (reward) => {
   if (!reward || !reward.reward) return ''
 
@@ -221,7 +237,7 @@ const formatReward = (reward) => {
 
   return res.join('、') + (reward.minTrustLevel >= 3 ? '（三级佬友专享）' : '')
 }
-
+// 签到日历显示颜色
 const qiandaoColor = (m, d) => {
   const nowMonth = ((new Date()).getMonth() + 1)
   const nowDate = (new Date()).getDate()
@@ -232,6 +248,7 @@ const qiandaoColor = (m, d) => {
   if (nowDate > d) return '#ef4444'
   return '#000'
 }
+// 签到日历显示文字
 const qiandaoStatus = (m, d) => {
   const nowMonth = ((new Date()).getMonth() + 1)
   const nowDate = (new Date()).getDate()
@@ -243,6 +260,7 @@ const qiandaoStatus = (m, d) => {
   return ''
 }
 
+// 福利兑换购买商品
 const buyFuLiDuiHuan = async (id) => {
   popoverRefs.get('fuliduihuan')[id].setShow(false)
 
@@ -251,42 +269,42 @@ const buyFuLiDuiHuan = async (id) => {
     count: fuliduihuan.value.count
   })
   const [ data, _ ] = await Promise.all([fetchJiFenDuiHuanInfo(), commonStore.fetchUserInfo()])
-  resetFuLiDuiHuanInfo(data)
+  fuliduihuan.value.categorys = data
 
   window.$message.success('兑换成功')
 }
 
-const resetFuLiDuiHuanInfo = (data) => {
-  fuliduihuan.value.categorys = data
-  if (data.length > 0) {
-    fuliduihuan.value.defaultTab = data[0].id
-  } else {
-    fuliduihuan.value.defaultTab = 'wish'
-  }
-}
-
+// 页面加载时，准备数据
 onMounted(async () => {
+  // 从服务器获取数据
   const [
-    signInInfoData,
-    dnfCharacListData,
-    kiFenDuiHuanInfoData,
+    signInInfoData, // 签到信息
+    dnfCharacListData, // 角色列表
+    jiFenDuiHuanInfoData, // 积分兑换信息
   ] = await Promise.all([
     fetchSignInInfo(),
     fetchDnfCharacList(),
     fetchJiFenDuiHuanInfo(),
   ])
 
+  // 保存数据
   signInInfo.value = signInInfoData
   dnfCharacList.value = dnfCharacListData.map((item) => ({
     label: item.charac_name,
     value: item.charac_no,
   }))
-  resetFuLiDuiHuanInfo(kiFenDuiHuanInfoData)
+  fuliduihuan.value.categorys = jiFenDuiHuanInfoData
+  if (jiFenDuiHuanInfoData.length > 0) {
+    fuliduihuan.value.defaultTab = jiFenDuiHuanInfoData[0].id
+  } else {
+    fuliduihuan.value.defaultTab = 'wish'
+  }
 })
 
 </script>
 
 <style lang="scss" scoped>
+// 隐藏签到日历的上个月、下个月按钮
 :deep(.n-calendar-header__extra > .n-button-group) {
   display: none;
 }

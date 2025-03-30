@@ -1,10 +1,13 @@
 <template lang="pug">
 .h-screen.w-screen.bg-neutral-50
+  //- 登录页
   .w-96.mx-auto.pt-16(v-if="ready")
     n-card.text-center
       p.text-2xl
         a(href="https://linux.do/t/topic/472401?u=cat73") LinuxDo 毒奶粉公益服
       n-button.w-full.mt-8(type="info", @click="linuxDoLogin") 使用 LinuxDo 登陆
+
+  //- 登录回调过来时，正在尝试登录的提示
   n-flex(v-else, justify="center").mt-52
     div
       n-flex(justify="center")
