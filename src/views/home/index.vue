@@ -1,37 +1,69 @@
 <template lang="pug">
-div
-  p LinuxDo 信息：佬友 {{ commonStore.userInfo.linuxDoUsername }}，信任等级 {{ commonStore.userInfo.linuxDoTrustLevel }}，可用积分 {{ commonStore.userInfo.pointBalance }}
-  p 毒奶粉用户名：{{ commonStore.userInfo.dnfUsername ?? '未注册' }}，绑定角色 {{ commonStore.userInfo.dnfBindCharacName ?? '未绑定' }}
-  p
-    a.text-blue-500(href="https://linux.do/t/topic/472401?u=cat73") 客户端下载引导
+.px-8.py-6.space-y-8
+  //- L 站账号
+  n-card
+    n-flex(justify="space-between")
+      div
+        p.text-2xl 下午好，{{ commonStore.userInfo.linuxDoUsername }}
+        p.text-neutral-500 信任等级：{{ commonStore.userInfo.linuxDoTrustLevel }} 级
+      
+      n-button(strong, size="large", :bordered="false", @click="logout")
+        template(#icon)
+          n-icon(size="40")
+            LogOutOutline
 
-  n-button(type="info", @click="logout") 退出登录
+  //- 游戏账号
+  n-grid(x-gap="10", :cols="2")
+    //- 注册 + 修改密码
+    n-gi
+      n-card.h-full(title="游戏账号")
+        n-form(v-if="!commonStore.userInfo.dnfUsername", inline, label-placement="left", label-width="auto")
+          n-form-item(label="账号")
+            n-input(v-model:value="dnfaccount.username", placeholder="请输入账号")
+          n-form-item(label="密码")
+            n-input(v-model:value="dnfaccount.password", type="password", placeholder="请输入密码")
+          n-form-item
+            n-button(type="info", @click="registerDnfAccount") 注册游戏账号
+        n-form(v-else, inline, label-placement="left", label-width="auto")
+          n-form-item(label="密码")
+            n-input(v-model:value="dnfaccount.password", type="password", placeholder="请输入密码")
+          n-form-item
+            n-button(type="info", @click="changeDnfPassword") 修改游戏密码
+
+        //- 提示区
+        .text-neutral-500
+          p(v-if="!commonStore.userInfo.dnfUsername") * 您需要先注册账号，然后下载客户端后，使用注册的账号登录游戏，不用担心忘记密码，注册后随时可以修改
+          p(v-else) * 您已注册游戏账号 {{ commonStore.userInfo.dnfUsername }}，如果忘记密码，可在此修改
+        p
+          span.text-neutral-500 *&nbsp;
+          a.text-blue-500(href="https://linux.do/t/topic/472401?u=cat73") 客户端下载、服务器介绍及 FAQ
+
+    //- 绑定角色
+    n-gi
+      n-card.h-full(v-if="commonStore.userInfo.dnfUsername", title="角色绑定")
+        n-form(inline, label-placement="left", label-width="auto")
+          n-form-item(label="选择角色")
+            n-select.w-48(v-model:value="dnfCharacId", :options="dnfCharacList")
+          n-form-item
+            n-button(type="info", @click="bindDnfCharac") 绑定物品领取角色
+        
+        .text-neutral-500
+          p * 每日签到、积分兑换获得的物品会发送给绑定的角色
 
   n-divider
 
-  div.w-48
-    template(v-if="commonStore.userInfo.dnfUsername")
-      n-input(v-model:value="dnfaccount.password", type="password", placeholder="请输入新密码")
-      n-button(type="info", @click="changeDnfPassword") 修改毒奶粉登录密码
-    template(v-else)
-      n-input(v-model:value="dnfaccount.username", placeholder="请输入账号")
-      n-input(v-model:value="dnfaccount.password", type="password", placeholder="请输入密码")
-      n-button(type="info", @click="registerDnfAccount") 创建毒奶粉账号
-  p.text-xs.text-neutral-500 登录密码随时可在这里修改，受 DNF 数据库结构限制，只能传输 md5 值，无法使用更安全的 hash 方式，建议设一个和其他网站不一样的密码，反正忘了随时能改
+  div
+    p 签到配置：每天签到获得 {{ formatReward({ reward: signInInfo.conf.dailyReward, minTrustLevel: 1 }) }}
+    p(v-for="(monthReward, day) in signInInfo.conf.monthReward")
+      span 本月累签 {{ day }} 天签到获得 {{ formatReward(monthReward) }}
+    p 本月已签 {{ signInInfo.signInDays.length }} 天
+    n-button(type="info", @click="signIn") 签到领奖
 
-  n-divider
+  //- 签到活动
+  //- n-card(v-if="commonStore.userInfo.dnfUsername", title="每日签到")
 
-  div.w-48
-    n-select(v-model:value="dnfCharacId", :options="dnfCharacList")
-    n-button(type="info", @click="bindDnfCharac") 绑定签到奖励领取角色
-
-  n-divider
-
-  p 签到配置：每天签到获得 {{ formatReward({ reward: signInInfo.conf.dailyReward, minTrustLevel: 1 }) }}
-  p(v-for="(monthReward, day) in signInInfo.conf.monthReward")
-    span 本月累签 {{ day }} 天签到获得 {{ formatReward(monthReward) }}
-  p 本月已签 {{ signInInfo.signInDays.length }} 天
-  n-button(type="info", @click="signIn") 签到领奖
+  //- 积分
+  //- n-card(v-if="commonStore.userInfo.dnfUsername", title="积分兑换")
 
 </template>
 
@@ -41,6 +73,7 @@ import md5 from 'md5'
 import { useCommonStore } from '@/store'
 import { useRouter } from 'vue-router'
 import { doLogout, doRegisterDnfAccount, doChangeDnfPassword, fetchDnfCharacList, doBindDnfCharac, fetchSignInInfo, doSignIn } from '@/api'
+import { LogOutOutline } from '@vicons/ionicons5'
 
 const commonStore = useCommonStore()
 

@@ -4,7 +4,7 @@
     n-card.text-center
       p.text-2xl
         a(href="https://linux.do/t/topic/472401?u=cat73") LinuxDo 毒奶粉公益服
-      n-button.w-full.mt-8(type="info", @click="linuxDoLogin") LinuxDo 登陆
+      n-button.w-full.mt-8(type="info", @click="linuxDoLogin") 使用 LinuxDo 登陆
   n-flex(v-else, justify="center").mt-52
     div
       n-flex(justify="center")
