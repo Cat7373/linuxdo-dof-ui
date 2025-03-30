@@ -4,8 +4,7 @@
   n-card
     n-flex(justify="space-between")
       div
-        p.text-2xl 下午好，{{ commonStore.userInfo.linuxDoUsername }}
-        p.text-neutral-500 信任等级：{{ commonStore.userInfo.linuxDoTrustLevel }} 级
+        p.text-2xl 下午好，{{ commonStore.userInfo.linuxDoTrustLevel }} 级佬友 {{ commonStore.userInfo.linuxDoUsername }}
 
       n-button(strong, size="large", :bordered="false", @click="logout")
         template(#icon)
@@ -75,8 +74,6 @@
   //- 积分兑换
   n-card(v-if="commonStore.userInfo.dnfUsername", :title="`积分兑换 - 剩余 ${ commonStore.userInfo.pointBalance } 积分`")
     n-tabs(v-if="fuliduihuan.defaultTab", class="card-tabs", :default-value="fuliduihuan.defaultTab", animated)
-      //- TODO 许愿池
-
       n-tab-pane(v-for="category in fuliduihuan.categorys", :key="category.id", :name="category.id", :tab="category.name")
         n-grid(x-gap="10", y-gap="10", cols="2 900:4 1800:6")
           template(v-for="good in category.goods", :key="good.id")
@@ -100,6 +97,7 @@
                         CheckIcon
 
       n-tab-pane(name="wish", tab="许愿")
+        //- TODO 许愿池
         p
           span 许愿池建设中喵，请先至
           a.text-blue-500(href="https://linux.do/t/topic/472401?u=cat73") 论坛帖子
