@@ -1,7 +1,7 @@
 <template lang="pug">
 .px-8.py-6.space-y-8
   //- L 站账号
-  //- n-card
+  n-card
     n-flex(justify="space-between")
       div
         p.text-2xl 下午好，{{ commonStore.userInfo.linuxDoUsername }}
@@ -13,7 +13,7 @@
             LogoutIcon
 
   //- 游戏账号
-  //- n-grid(x-gap="10", y-gap="10", cols="1 600:2")
+  n-grid(x-gap="10", y-gap="10", cols="1 600:2")
     //- 注册 + 修改密码
     n-gi
       n-card.h-full(title="游戏账号")
@@ -53,7 +53,7 @@
           p * 每日签到、积分兑换获得的物品会发送给绑定的角色
 
   //- 每日签到
-  //- n-card(v-if="commonStore.userInfo.dnfUsername", title="每日签到")
+  n-card(v-if="commonStore.userInfo.dnfUsername", title="每日签到")
     n-tabs(class="card-tabs", default-value="signin", animated)
       n-tab-pane(name="signin", tab="签到")
         n-calendar(:default-value="now", :is-date-disabled="t => !dayjs(t).isSame(dayjs(), 'month')", #="{ month, date }", style="height: 500px;")
