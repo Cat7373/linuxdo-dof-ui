@@ -73,9 +73,8 @@
             p.text-neutral-200(v-else) 累签 {{ day }} 天礼品：{{ formatReward(monthReward) }}
 
   //- 积分兑换
-  n-card(v-if="commonStore.userInfo.dnfUsername", title="积分兑换")
+  n-card(v-if="commonStore.userInfo.dnfUsername", :title="`积分兑换 - 剩余 ${ commonStore.userInfo.pointBalance } 积分`")
     n-tabs(v-if="fuliduihuan.defaultTab", class="card-tabs", :default-value="fuliduihuan.defaultTab", animated)
-      //- TODO 可用积分
       //- TODO 许愿池
 
       n-tab-pane(v-for="category in fuliduihuan.categorys", :key="category.id", :name="category.id", :tab="category.name")
@@ -195,6 +194,7 @@ const confirmSignIn = async () => {
     content: `本月已签到 ${ signInInfo.value.signInDays.length + 1 } 天`,
   })
   signInInfo.value = await fetchSignInInfo()
+  await commonStore.fetchUserInfo()
 }
 
 const formatReward = (reward) => {
@@ -249,7 +249,8 @@ const buyFuLiDuiHuan = async (id) => {
     goodsId: id,
     count: fuliduihuan.value.count
   })
-  resetFuLiDuiHuanInfo(await fetchJiFenDuiHuanInfo())
+  const [ data, _ ] = await Promise.all([fetchJiFenDuiHuanInfo(), commonStore.fetchUserInfo()])
+  resetFuLiDuiHuanInfo(data)
 
   window.$message.success('兑换成功')
 }
