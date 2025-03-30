@@ -85,3 +85,29 @@ export function doSignIn(data) {
     data,
   })
 }
+
+// ==== 积分兑换 ====
+
+export function fetchJiFenDuiHuanInfo(params) {
+  return fetch({
+    url: '/api/fuliduihuan/info',
+    method: 'GET',
+    params,
+  })
+}
+
+export function doJiFenDuiHuan(data) {
+  return fetch({
+    url: '/api/fuliduihuan/buy',
+    method: 'POST',
+    data,
+  })
+}
+
+export function doJiFenDuiHuanWish(data) {
+  return fetch({
+    url: '/api/fuliduihuan/wish',
+    method: 'POST',
+    data,
+  })
+}

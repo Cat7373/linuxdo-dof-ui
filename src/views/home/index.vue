@@ -1,19 +1,19 @@
 <template lang="pug">
 .px-8.py-6.space-y-8
   //- L 站账号
-  n-card
+  //- n-card
     n-flex(justify="space-between")
       div
         p.text-2xl 下午好，{{ commonStore.userInfo.linuxDoUsername }}
         p.text-neutral-500 信任等级：{{ commonStore.userInfo.linuxDoTrustLevel }} 级
-      
+
       n-button(strong, size="large", :bordered="false", @click="logout")
         template(#icon)
           n-icon(size="40")
-            LogOutOutline
+            LogoutIcon
 
   //- 游戏账号
-  n-grid(x-gap="10", y-gap="10", cols="1 600:2")
+  //- n-grid(x-gap="10", y-gap="10", cols="1 600:2")
     //- 注册 + 修改密码
     n-gi
       n-card.h-full(title="游戏账号")
@@ -53,7 +53,7 @@
           p * 每日签到、积分兑换获得的物品会发送给绑定的角色
 
   //- 每日签到
-  n-card(v-if="commonStore.userInfo.dnfUsername", title="每日签到")
+  //- n-card(v-if="commonStore.userInfo.dnfUsername", title="每日签到")
     n-tabs(class="card-tabs", default-value="signin", animated)
       n-tab-pane(name="signin", tab="签到")
         n-calendar(:default-value="now", :is-date-disabled="t => !dayjs(t).isSame(dayjs(), 'month')", #="{ month, date }", style="height: 500px;")
@@ -73,8 +73,35 @@
             p.text-neutral-200(v-else) 累签 {{ day }} 天礼品：{{ formatReward(monthReward) }}
 
   //- 积分兑换
-  //- n-card(v-if="commonStore.userInfo.dnfUsername", title="积分兑换")
+  n-card(v-if="commonStore.userInfo.dnfUsername", title="积分兑换")
+    n-tabs(v-if="fuliduihuan.defaultTab", class="card-tabs", :default-value="fuliduihuan.defaultTab", animated)
+      //- TODO 可用积分
+      //- TODO 许愿池
 
+      n-tab-pane(v-for="category in fuliduihuan.categorys", :key="category.id", :name="category.id", :tab="category.name")
+        n-grid(x-gap="10", y-gap="10", cols="2 900:4 1800:6")
+          template(v-for="good in category.goods", :key="good.id")
+            n-gi.border.p-2
+              n-flex(justify="space-between")
+                .info
+                  p.text-sm {{ good.name }}
+                  p.text-xs.text-neutral-500
+                    span {{ good.price }} 积分
+                    span(v-if="good.limit < 99999999") ，限购: {{ good.todayCount }}/{{ good.limit }}
+
+                n-popover(trigger="hover", @update:show="() => fuliduihuan.count = 1", :ref="el => saveRef(el, 'fuliduihuan', good.id)")
+                  template(#trigger)
+                    n-button 兑换
+
+                  n-input-group
+                    n-input-number(v-model:value="fuliduihuan.count", :precision="0", :min="1", :max="good.limit - good.todayCount", placeholder="数量")
+                      template(#suffix) 个
+                    n-button(type="primary", @click="buyFuLiDuiHuan(good.id)")
+                      template(#icon)
+                        CheckIcon
+
+      n-tab-pane(name="wish", tab="许愿")
+        p 许愿池建设中喵...
 </template>
 
 <script setup>
@@ -83,8 +110,8 @@ import md5 from 'md5'
 import dayjs from 'dayjs'
 import { useCommonStore } from '@/store'
 import { useRouter } from 'vue-router'
-import { doLogout, doRegisterDnfAccount, doChangeDnfPassword, fetchDnfCharacList, doBindDnfCharac, fetchSignInInfo, doSignIn } from '@/api'
-import { LogOutOutline } from '@vicons/ionicons5'
+import { doLogout, doRegisterDnfAccount, doChangeDnfPassword, fetchDnfCharacList, doBindDnfCharac, fetchSignInInfo, doSignIn, fetchJiFenDuiHuanInfo, doJiFenDuiHuan, doJiFenDuiHuanWish } from '@/api'
+import { CheckmarkOutline as CheckIcon, LogOutOutline as LogoutIcon } from '@vicons/ionicons5'
 
 const commonStore = useCommonStore()
 
@@ -104,6 +131,20 @@ const signInInfo = ref({
 })
 const dnfCharacList = ref([])
 const dnfCharacId = ref(null)
+const fuliduihuan = ref({
+  categorys: [],
+  defaultTab: '',
+  count: 1
+})
+
+const popoverRefs = new Map()
+
+const saveRef = (el, type, id) => {
+  if (!popoverRefs.has(type)) {
+    popoverRefs.set(type, {})
+  }
+  popoverRefs.get(type)[id] = el
+}
 
 const logout = async () => {
   await doLogout()
@@ -201,13 +242,44 @@ const qiandaoStatus = (m, d) => {
   return ''
 }
 
+const buyFuLiDuiHuan = async (id) => {
+  popoverRefs.get('fuliduihuan')[id].setShow(false)
+
+  await doJiFenDuiHuan({
+    goodsId: id,
+    count: fuliduihuan.value.count
+  })
+  resetFuLiDuiHuanInfo(await fetchJiFenDuiHuanInfo())
+
+  window.$message.success('兑换成功')
+}
+
+const resetFuLiDuiHuanInfo = (data) => {
+  fuliduihuan.value.categorys = data
+  if (data.length > 0) {
+    fuliduihuan.value.defaultTab = data[0].id
+  } else {
+    fuliduihuan.value.defaultTab = 'wish'
+  }
+}
+
 onMounted(async () => {
-  signInInfo.value = await fetchSignInInfo()
-  const characList = await fetchDnfCharacList()
-  dnfCharacList.value = characList.map((item) => ({
+  const [
+    signInInfoData,
+    dnfCharacListData,
+    kiFenDuiHuanInfoData,
+  ] = await Promise.all([
+    fetchSignInInfo(),
+    fetchDnfCharacList(),
+    fetchJiFenDuiHuanInfo(),
+  ])
+
+  signInInfo.value = signInInfoData
+  dnfCharacList.value = dnfCharacListData.map((item) => ({
     label: item.charac_name,
     value: item.charac_no,
   }))
+  resetFuLiDuiHuanInfo(kiFenDuiHuanInfoData)
 })
 
 </script>
