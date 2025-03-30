@@ -167,7 +167,7 @@ const logout = async () => {
 // 注册游戏账号
 const registerDnfAccount = async () => {
   if (!dnfaccount.value.password) {
-    window.$message.error('请输入密码')
+    window.$message.warning('请输入密码')
     return
   }
 
@@ -180,7 +180,7 @@ const registerDnfAccount = async () => {
 // 修改游戏密码
 const changeDnfPassword = async () => {
   if (!dnfaccount.value.password) {
-    window.$message.error('请输入密码')
+    window.$message.warning('请输入密码')
     return
   }
 
@@ -191,6 +191,11 @@ const changeDnfPassword = async () => {
 
 // 绑定角色
 const bindDnfCharac = async () => {
+  if (!dnfCharacId.value) {
+    window.$message.warning('请选择要绑定的角色')
+    return
+  }
+
   await doBindDnfCharac({ characNo: dnfCharacId.value })
   await commonStore.fetchUserInfo()
   window.$message.success('绑定成功')
