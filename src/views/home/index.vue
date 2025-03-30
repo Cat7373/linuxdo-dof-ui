@@ -277,6 +277,11 @@ const qiandaoStatus = (m, d) => {
 
 // 福利兑换购买商品
 const buyFuLiDuiHuan = async (id) => {
+  if (!commonStore.userInfo.dnfBindCharacName) {
+    window.$message.warning('请需要先绑定角色，才能进行兑换')
+    return
+  }
+
   popoverRefs.get('fuliduihuan')[id].setShow(false)
 
   await doJiFenDuiHuan({
