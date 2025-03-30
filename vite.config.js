@@ -1,5 +1,4 @@
 import vue from '@vitejs/plugin-vue'
-import visualizer from 'rollup-plugin-visualizer'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { NaiveUiResolver } from 'unplugin-vue-components/resolvers'
@@ -29,14 +28,6 @@ export default {
     Components({
       resolvers: [NaiveUiResolver(), XNaiveUIResolver()]
     }),
-    // 打包结果体积分析
-    {
-      ...visualizer({
-        filename: 'dist/report.html',
-        gzipSize: true,
-      }),
-      apply: 'build',
-    },
   ],
   resolve: {
     alias: [
@@ -52,7 +43,7 @@ export default {
     host: '0.0.0.0',
     proxy: {
       // '/api': 'http://127.0.0.1:8652',
-      '/api': 'http://47.97.21.184:3389',
+      '/api': 'https://linuxdodof.cat73.org',
     }
   },
   build: {
