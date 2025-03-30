@@ -13,7 +13,7 @@
             LogOutOutline
 
   //- 游戏账号
-  n-grid(x-gap="10", :cols="2")
+  n-grid(x-gap="10", y-gap="10", cols="1 600:2")
     //- 注册 + 修改密码
     n-gi
       n-card.h-full(title="游戏账号")
@@ -38,31 +38,41 @@
           span.text-neutral-500 *&nbsp;
           a.text-blue-500(href="https://linux.do/t/topic/472401?u=cat73") 客户端下载、服务器介绍及 FAQ
 
-    //- 绑定角色
+    //- 角色绑定
     n-gi
       n-card.h-full(v-if="commonStore.userInfo.dnfUsername", title="角色绑定")
         n-form(inline, label-placement="left", label-width="auto")
           n-form-item(label="选择角色")
             n-select.w-48(v-model:value="dnfCharacId", :options="dnfCharacList")
           n-form-item
-            n-button(type="info", @click="bindDnfCharac") 绑定物品领取角色
+            n-button(type="info", @click="bindDnfCharac") 绑定角色
         
         .text-neutral-500
+          p(v-if="commonStore.userInfo.dnfBindCharacName") * 您已绑定游戏角色 {{ commonStore.userInfo.dnfBindCharacName }}
+          p(v-else) * 您还没绑定游戏角色
           p * 每日签到、积分兑换获得的物品会发送给绑定的角色
 
-  n-divider
+  //- 每日签到
+  n-card(v-if="commonStore.userInfo.dnfUsername", title="每日签到")
+    n-tabs(class="card-tabs", default-value="signin", animated)
+      n-tab-pane(name="signin", tab="签到")
+        n-calendar(:default-value="now", :is-date-disabled="t => !dayjs(t).isSame(dayjs(), 'month')", #="{ month, date }", style="height: 500px;")
+          p(:style="{ color: qiandaoColor(month, date) }") {{ qiandaoStatus(month, date) }}
+        
+        .text-neutral-500
+          p * 本月已签到 {{ signInInfo.signInDays.length }} 天
 
-  div
-    p 签到配置：每天签到获得 {{ formatReward({ reward: signInInfo.conf.dailyReward, minTrustLevel: 1 }) }}
-    p(v-for="(monthReward, day) in signInInfo.conf.monthReward")
-      span 本月累签 {{ day }} 天签到获得 {{ formatReward(monthReward) }}
-    p 本月已签 {{ signInInfo.signInDays.length }} 天
-    n-button(type="info", @click="signIn") 签到领奖
+        n-button.w-full.mt-8(v-if="signInInfo.signInDays.includes(new Date().getDate())", type="info", disabled) 今日已签到
+        n-button.w-full.mt-8(v-else, type="info", @click="signIn") 签到
+      n-tab-pane(name="reward", tab="说明")
+        .text-sm
+          p.text-neutral-500 每日礼品：{{ formatReward({ reward: signInInfo.conf.dailyReward, minTrustLevel: 1 }) }}
+          p &nbsp;
+          template(v-for="(monthReward, day) in signInInfo.conf.monthReward")
+            p.text-neutral-500(v-if="commonStore.userInfo.linuxDoTrustLevel >= monthReward.minTrustLevel") 累签 {{ day }} 天礼品：{{ formatReward(monthReward) }}
+            p.text-neutral-200(v-else) 累签 {{ day }} 天礼品：{{ formatReward(monthReward) }}
 
-  //- 签到活动
-  //- n-card(v-if="commonStore.userInfo.dnfUsername", title="每日签到")
-
-  //- 积分
+  //- 积分兑换
   //- n-card(v-if="commonStore.userInfo.dnfUsername", title="积分兑换")
 
 </template>
@@ -70,6 +80,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import md5 from 'md5'
+import dayjs from 'dayjs'
 import { useCommonStore } from '@/store'
 import { useRouter } from 'vue-router'
 import { doLogout, doRegisterDnfAccount, doChangeDnfPassword, fetchDnfCharacList, doBindDnfCharac, fetchSignInInfo, doSignIn } from '@/api'
@@ -169,6 +180,27 @@ const formatReward = (reward) => {
   return res.join('、') + (reward.minTrustLevel >= 3 ? '（三级佬友专享）' : '')
 }
 
+const qiandaoColor = (m, d) => {
+  const nowMonth = ((new Date()).getMonth() + 1)
+  const nowDate = (new Date()).getDate()
+  const isCheck = signInInfo.value.signInDays.includes(d)
+
+  if (m != nowMonth) return '#000'
+  if (isCheck) return '#84cc16'
+  if (nowDate > d) return '#ef4444'
+  return '#000'
+}
+const qiandaoStatus = (m, d) => {
+  const nowMonth = ((new Date()).getMonth() + 1)
+  const nowDate = (new Date()).getDate()
+  const isCheck = signInInfo.value.signInDays.includes(d)
+
+  if (m != nowMonth) return ''
+  if (isCheck) return '√'
+  if (nowDate > d) return 'X'
+  return ''
+}
+
 onMounted(async () => {
   signInInfo.value = await fetchSignInInfo()
   const characList = await fetchDnfCharacList()
@@ -179,3 +211,9 @@ onMounted(async () => {
 })
 
 </script>
+
+<style lang="scss" scoped>
+:deep(.n-calendar-header__extra > .n-button-group) {
+  display: none;
+}
+</style>
