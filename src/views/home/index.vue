@@ -100,7 +100,10 @@
                         CheckIcon
 
       n-tab-pane(name="wish", tab="许愿")
-        p 许愿池建设中喵...
+        p
+          span 许愿池建设中喵，请先至
+          a.text-blue-500(href="https://linux.do/t/topic/472401?u=cat73") 论坛帖子
+          span 许愿喵...
 </template>
 
 <script setup>
