@@ -1,7 +1,7 @@
 <template lang="pug">
 .px-8.py-6.space-y-8
   //- L 站账号
-  n-card
+  n-card(size="small")
     n-flex(justify="space-between")
       div
         p.text-2xl 下午好，{{ commonStore.userInfo.linuxDoTrustLevel }} 级佬友 {{ commonStore.userInfo.linuxDoUsername }}
@@ -15,7 +15,7 @@
   n-grid(x-gap="10", y-gap="10", cols="1 600:2")
     //- 注册 + 修改密码
     n-gi
-      n-card.h-full(title="游戏账号")
+      n-card.h-full(size="small", title="游戏账号")
         n-form(v-if="!commonStore.userInfo.dnfUsername", inline, label-placement="left", label-width="auto")
           n-form-item(label="账号")
             n-input(v-model:value="dnfaccount.username", placeholder="请输入账号")
@@ -25,7 +25,7 @@
             n-button(type="info", @click="registerDnfAccount") 注册游戏账号
         n-form(v-else, inline, label-placement="left", label-width="auto")
           n-form-item(label="密码")
-            n-input(v-model:value="dnfaccount.password", type="password", placeholder="请输入密码")
+            n-input(v-model:value="dnfaccount.password", type="password", placeholder="请输入新密码")
           n-form-item
             n-button(type="info", @click="changeDnfPassword") 修改游戏密码
 
@@ -39,7 +39,7 @@
 
     //- 角色绑定
     n-gi
-      n-card.h-full(v-if="commonStore.userInfo.dnfUsername", title="角色绑定")
+      n-card.h-full(v-if="commonStore.userInfo.dnfUsername", size="small", title="角色绑定")
         n-form(inline, label-placement="left", label-width="auto")
           n-form-item(label="选择角色")
             n-select.w-48(v-model:value="dnfCharacId", :options="dnfCharacList")
@@ -52,7 +52,7 @@
           p * 每日签到、积分兑换获得的物品会发送给绑定的角色
 
   //- 每日签到
-  n-card(v-if="commonStore.userInfo.dnfUsername", title="每日签到")
+  n-card(v-if="commonStore.userInfo.dnfUsername", size="small", title="每日签到")
     n-tabs(class="card-tabs", default-value="signin", animated)
       n-tab-pane(name="signin", tab="签到")
         n-calendar(:default-value="now", :is-date-disabled="t => !dayjs(t).isSame(dayjs(), 'month')", #="{ month, date }", style="height: 500px;")
@@ -72,7 +72,7 @@
             p.text-neutral-200(v-else) 累签 {{ day }} 天礼品：{{ formatReward(monthReward) }}
 
   //- 积分兑换
-  n-card(v-if="commonStore.userInfo.dnfUsername", :title="`积分兑换 - 剩余 ${ commonStore.userInfo.pointBalance } 积分`")
+  n-card(v-if="commonStore.userInfo.dnfUsername", size="small", :title="`积分兑换 - 剩余 ${ commonStore.userInfo.pointBalance } 积分`")
     n-tabs(v-if="fuliduihuan.defaultTab", class="card-tabs", :default-value="fuliduihuan.defaultTab", animated)
       n-tab-pane(v-for="category in fuliduihuan.categorys", :key="category.id", :name="category.id", :tab="category.name")
         n-grid(x-gap="10", y-gap="10", cols="2 900:4 1800:6")
