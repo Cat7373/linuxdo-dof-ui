@@ -1,7 +1,7 @@
 <template lang="pug">
 .px-8.py-6.space-y-8.bg-color
   //- L 站账号
-  n-card(size="small")
+  n-card.rounded-xl.shadow-lg(size="small")
     n-flex(justify="space-between")
       div
         //- TODO 下午好？
@@ -15,7 +15,7 @@
   n-grid(x-gap="10", y-gap="10", cols="1 600:2")
     //- 游戏账号
     n-gi
-      n-card.h-full(size="small", title="游戏账号")
+      n-card.rounded-xl.shadow-lg.h-full(size="small", title="游戏账号")
         //- 注册 + 修改密码
         n-form(v-if="!commonStore.userInfo.dnfUsername", inline, label-placement="left", label-width="auto")
           n-form-item(label="账号")
@@ -40,7 +40,7 @@
 
     //- 角色绑定
     n-gi
-      n-card.h-full(v-if="commonStore.userInfo.dnfUsername", size="small", title="角色绑定")
+      n-card.rounded-xl.shadow-lg.h-full(v-if="commonStore.userInfo.dnfUsername", size="small", title="角色绑定")
         //- 角色绑定
         n-form(inline, label-placement="left", label-width="auto")
           n-form-item(label="选择角色")
@@ -55,11 +55,11 @@
           p * 每日签到、积分兑换获得的物品会发送给绑定的角色
 
   //- 每日签到
-  n-card(v-if="commonStore.userInfo.dnfUsername", size="small", title="每日签到")
+  n-card.rounded-xl.shadow-lg(v-if="commonStore.userInfo.dnfUsername", size="small", title="每日签到")
     n-tabs(class="card-tabs", default-value="signin", animated)
       //- 签到页
       n-tab-pane(name="signin", tab="签到")
-        n-calendar(:is-date-disabled="t => !dayjs(t).isSame(dayjs(), 'month')", #="{ month, date }", style="height: 500px;")
+        n-calendar(:is-date-disabled="t => !dayjs(t).isSame(dayjs(), 'month')", #="{ month, date }", style="height: 400px;")
           p(:style="{ color: qiandaoColor(month, date) }") {{ qiandaoStatus(month, date) }}
 
         .text-neutral-500
@@ -78,14 +78,14 @@
             p.text-neutral-200(v-else) 累签 {{ day }} 天礼品：{{ formatReward(monthReward) }}
 
   //- 积分兑换
-  n-card(v-if="commonStore.userInfo.dnfUsername", size="small", :title="`积分兑换 - 剩余 ${ commonStore.userInfo.pointBalance } 积分`")
+  n-card.rounded-xl.shadow-lg(v-if="commonStore.userInfo.dnfUsername", size="small", :title="`积分兑换 - 剩余 ${ commonStore.userInfo.pointBalance } 积分`")
     n-tabs(v-if="fuliduihuan.defaultTab", class="card-tabs", :default-value="fuliduihuan.defaultTab", animated)
       //- 商品分类
       n-tab-pane(v-for="category in fuliduihuan.categorys", :key="category.id", :name="category.id", :tab="category.name")
         n-grid(x-gap="10", y-gap="10", cols="1 550:2 900:4 1800:6")
           //- 商品
           template(v-for="good in category.goods", :key="good.id")
-            n-gi.border.rounded.p-2
+            n-gi.border.rounded-lg.p-2
               n-flex(justify="space-between")
                 .info
                   p.text-sm {{ good.name }}
