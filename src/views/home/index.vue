@@ -3,13 +3,11 @@
   //- L 站账号
   n-card.rounded-xl.shadow-lg(size="small")
     n-flex(justify="space-between")
-      div
-        //- TODO 下午好？
-        p.text-2xl 下午好，{{ commonStore.userInfo.linuxDoTrustLevel }} 级佬友 {{ commonStore.userInfo.linuxDoUsername }}
+      p.text-xl.leading-10 {{ helloText() }}，{{ commonStore.userInfo.linuxDoTrustLevel }} 级佬友 {{ commonStore.userInfo.linuxDoUsername }}
 
       n-button(strong, size="large", :bordered="false", @click="logout")
         template(#icon)
-          n-icon(size="40")
+          n-icon(size="30")
             LogoutIcon
 
   n-grid(x-gap="10", y-gap="10", cols="1 600:2")
@@ -43,8 +41,8 @@
       n-card.rounded-xl.shadow-lg.h-full(v-if="commonStore.userInfo.dnfUsername", size="small", title="角色绑定")
         //- 角色绑定
         n-form(inline, label-placement="left", label-width="auto")
-          n-form-item(label="选择角色")
-            n-select.w-48(v-model:value="dnfCharacId", :options="dnfCharacList")
+          n-form-item(label="角色")
+            n-select.w-48(v-model:value="dnfCharacId", :options="dnfCharacList", placeholder="请选择角色")
           n-form-item
             n-button(type="info", @click="bindDnfCharac") 绑定角色
 
@@ -159,6 +157,19 @@ const saveRef = (el, type, id) => {
   popoverRefs.get(type)[id] = el
 }
 
+// 问候语
+const helloText = () => {
+  const h = new Date().getHours()
+  if (h >= 23 || h < 6) {
+    return '夜深了'
+  } else if (h < 12) {
+    return '上午好'
+  } else if (h < 18) {
+    return '下午好'
+  } else {
+    return '晚上好'
+  }
+}
 // 退出登录
 const logout = async () => {
   await doLogout()
