@@ -58,7 +58,7 @@
     n-tabs(class="card-tabs", default-value="signin", animated)
       //- 签到页
       n-tab-pane(name="signin", tab="签到")
-        n-calendar(:default-value="now", :is-date-disabled="t => !dayjs(t).isSame(dayjs(), 'month')", #="{ month, date }", style="height: 500px;")
+        n-calendar(:is-date-disabled="t => !dayjs(t).isSame(dayjs(), 'month')", #="{ month, date }", style="height: 500px;")
           p(:style="{ color: qiandaoColor(month, date) }") {{ qiandaoStatus(month, date) }}
 
         .text-neutral-500
@@ -220,10 +220,24 @@ const signIn = async () => {
 }
 // 确认签到
 const confirmSignIn = async () => {
-  const res = await doSignIn()
+  await doSignIn()
+
+  const days = signInInfo.value.signInDays.length + 1
+  const reward = signInInfo.value.conf.dailyReward
+  const monthConf = signInInfo.value.conf.monthReward[days]
+  if (monthConf && commonStore.userInfo.linuxDoTrustLevel >= monthConf.minTrustLevel) {
+    reward.cash = (reward.cash ?? 0) + (monthConf.reward.cash ?? 0)
+    reward.gold = (reward.gold ?? 0) + (monthConf.reward.gold ?? 0)
+    reward.point = (reward.point ?? 0) + (monthConf.reward.point ?? 0)
+    for (const itemId in monthConf.reward.items) {
+      const count = monthConf.reward.items[itemId]
+      reward.items[itemId] = (reward.items[itemId] ?? 0) + count
+    }
+  }
+
   window.$dialog.success({
     title: '签到成功',
-    content: `本月已签到 ${ signInInfo.value.signInDays.length + 1 } 天`,
+    content: `本月已签到 ${ days } 天，获得 ${ formatReward({ reward: reward, minTrustLevel: 0 }) }`,
   })
   signInInfo.value = await fetchSignInInfo()
   await commonStore.fetchUserInfo()
@@ -250,7 +264,12 @@ const formatReward = (reward) => {
     }
   }
 
-  return res.join('、') + (reward.minTrustLevel >= 3 ? '（三级佬友专享）' : '')
+  let limitInfo = ''
+  if (commonStore.userInfo.linuxDoTrustLevel < reward.minTrustLevel) {
+    limitInfo = `（${reward.minTrustLevel} 级佬专享）`
+  }
+
+  return res.join('、') + limitInfo
 }
 // 签到日历显示颜色
 const qiandaoColor = (m, d) => {
