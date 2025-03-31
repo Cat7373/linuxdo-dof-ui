@@ -82,7 +82,7 @@
     n-tabs(v-if="fuliduihuan.defaultTab", class="card-tabs", :default-value="fuliduihuan.defaultTab", animated)
       //- 商品分类
       n-tab-pane(v-for="category in fuliduihuan.categorys", :key="category.id", :name="category.id", :tab="category.name")
-        n-grid(x-gap="10", y-gap="10", cols="2 900:4 1800:6")
+        n-grid(x-gap="10", y-gap="10", cols="1 550:2 900:4 1800:6")
           //- 商品
           template(v-for="good in category.goods", :key="good.id")
             n-gi.border.rounded.p-2
