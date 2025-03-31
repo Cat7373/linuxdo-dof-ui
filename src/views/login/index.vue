@@ -1,5 +1,5 @@
 <template lang="pug">
-.h-screen.w-screen.bg-neutral-50
+.h-screen.w-screen.bg-color
   //- 登录页
   .w-96.mx-auto.pt-16(v-if="ready")
     n-card.text-center
@@ -49,4 +49,7 @@ onMounted(async () => {
 </script>
 
 <style lang="scss" scoped>
+.bg-color {
+  background-image: linear-gradient(to bottom right in oklab, #eef2ff, #0000);
+}
 </style>

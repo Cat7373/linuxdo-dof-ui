@@ -1,9 +1,10 @@
 <template lang="pug">
-.px-8.py-6.space-y-8.bg-neutral-50
+.px-8.py-6.space-y-8.bg-color
   //- L 站账号
   n-card(size="small")
     n-flex(justify="space-between")
       div
+        //- TODO 下午好？
         p.text-2xl 下午好，{{ commonStore.userInfo.linuxDoTrustLevel }} 级佬友 {{ commonStore.userInfo.linuxDoUsername }}
 
       n-button(strong, size="large", :bordered="false", @click="logout")
@@ -260,6 +261,7 @@ const formatReward = (reward) => {
   if (reward.reward.items) {
     for (const id in reward.reward.items) {
       const count = reward.reward.items[id]
+      // TOOD 数字/字母开头的物品，前面增加一个空格
       res.push(`${count} 个${signInInfo.value.items[id]}`)
     }
   }
@@ -346,5 +348,9 @@ onMounted(async () => {
 // 隐藏签到日历的上个月、下个月按钮
 :deep(.n-calendar-header__extra > .n-button-group) {
   display: none;
+}
+
+.bg-color {
+  background-image: linear-gradient(to bottom right in oklab, #eef2ff, #0000);
 }
 </style>
